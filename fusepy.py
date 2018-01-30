@@ -4,6 +4,7 @@ from __future__ import with_statement
 import os
 import sys
 import errno
+from Crypto.Cipher import AES
 
 from fuse import FUSE, FuseOSError, Operations
 
@@ -105,12 +106,23 @@ class MyFS(Operations):
 
     def read(self, path, length, offset, fh):
         os.lseek(fh, offset, os.SEEK_SET)
-        return os.read(fh, length)
+        var=os.read(fh, length)
+        obj=AES.new('This is a key123',AES.MODE_CBC,'This is an IV456')
+        message=obj.decrypt(var)
+        var=message
+        return var
 
     def write(self, path, buf, offset, fh):
         os.lseek(fh, offset, os.SEEK_SET)
-        return os.write(fh, buf)
-
+        obj=AES.new('This is a key123',AES.MODE_CBC,'This is an IV456')
+        bufstring=str(buf,'utf-8')
+        print(len(bufstring))
+        ciphertext=obj.encrypt(bufstring)
+        print(type(ciphertext))
+        buf=ciphertext
+        var=os.write(fh, buf)
+        return var        
+        
     def truncate(self, path, length, fh=None):
         full_path = self._full_path(path)
         with open(full_path, 'r+') as f:
