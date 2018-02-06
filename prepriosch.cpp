@@ -127,6 +127,6 @@ int main()
 			wt[i]=0;
 		tot+=(wt[i]);
 	}
-	//cout<<"Average waiting time is "<<tot/n<<endl;
+	cout<<"Average waiting time is "<<tot/n<<endl;
 	return 0;
 }
